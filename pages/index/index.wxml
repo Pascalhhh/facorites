@@ -1,0 +1,111 @@
+<view class="navbar">
+  <text class="item {{currentTab==index ? 'active' : ''}}" wx:for="{{navbar}}" wx:key="{{index}}" data-index="{{index}}" bindtap="onNavbarTap">{{item}}</text>
+</view>
+
+<!--分类-->
+
+<view class="categories_container" hidden="{{currentTab!=0}}">
+    <scroll-view class="categories_scroll_view" scroll-y="true">
+        <view class="categories">
+            <view class="category_container" wx:for="{{categories}}" wx:key="id">
+                <swiper class="category_swiper {{item.id==currentCategory ? 'current' : 'none'}}">
+                    <swiper-item style="width: 100%">
+                        <view class="category_inner" bindtap="onCategoryTap" data-id="{{item.id}}">
+                            <view class="category_dot_box"><view class="category_dot" style="background-color: {{item.color}}"/></view>
+                            <text class="category_title">{{item.name}}</text>
+                            <text class="category_num">{{item.num}}篇文章</text>
+                        </view>
+                    </swiper-item>
+                    <swiper-item wx:if="{{item.id>=0}}">
+                        <view class="category_delete" bindtap="onCategoryDeleteTap" data-id="{{item.id}}">
+                            <text>删除</text>
+                        </view>
+                    </swiper-item>
+                </swiper>
+            </view>
+        </view>
+    </scroll-view>
+    <view class="add_cat_container">
+        <input class="add_category" placeholder="添加新分类..." value="{{setCategoryInput}}" maxlength="5" bindconfirm="onCreateCategory"></input>
+    </view>
+</view>
+
+<!--文章-->
+
+<view class="articles" hidden="{{currentTab!=1}}">
+    <scroll-view class="articles_scroll_view" scroll-y="true" 
+    bindscroll="onArticlesScroll" bindscrolltoupper="onArticlesScrollToUpper"
+    bindscrolltolower="onArticlesScrollToLower">
+        <view class="articles_header">
+            <view class="category_dot_box">
+                <view class="category_dot" style="background-color: {{currentCategoryColor}}"/>
+            </view>
+            <view class="article_category_title">
+                {{currentCategoryTitle}}
+            </view>
+        </view>
+
+        <view class="articles_empty_view" wx:if="{{articles.length==0}}">
+            <image class="empty_image" src="/image/empty.png" mode="widthFix"></image>
+            <text class="empty_text">该分类还没有收藏</text>
+        </view>
+
+        <view class="article" wx:for="{{articles}}" wx:key="id">
+            <view class="article_main">
+                <swiper class="article_swiper">
+                    <swiper-item style="display: flex; flex-direction: row;" bindtap="onArticleTap" data-article_id="{{item.id}}">
+                        <view class="article_info">
+                            <view class="article_title">
+                                {{item.title}}
+                            </view>
+                            <view class="article_abstract">
+                                {{item.abstract}}
+                            </view>
+                        </view>
+                        <view class="article_image_wrapper" wx:if="{{item.cover!=null}}">
+                            <image class="article_image" mode="aspectFill" src="{{item.cover}}"></image>
+                        </view>
+                    </swiper-item>
+                    <swiper-item style="display: flex; flex-direction: column;">
+                        <view class="article_share" wx:if="{{item.share_count!=null}}">
+                            分享已被阅读{{item.share_count}}次
+                        </view>
+                        <view class="article_options" style="height:{{item.share!=null ? '80%' : '100%'}};">
+                            <view class="article_icon_box" data-id="{{item.id}}" bindtap="onArticleCategorize">
+                                <image src="/image/categorize.png" style="width: 80rpx; height: 80rpx;"/>
+                            </view>
+                            <view class="article_icon_box" data-id="{{item.id}}" bindtap="onArticleEditTag">
+                                <image src="/image/tag.png" style="width: 80rpx; height: 80rpx;"/>
+                            </view>
+                            <view class="article_icon_box" data-id="{{item.id}}" bindtap="onArticleShare">
+                                <image src="/image/share.png" style="width: 80rpx; height: 80rpx;"/>
+                            </view>
+                            <view class="article_icon_box" data-id="{{item.id}}" bindtap="onArticleDelete">
+                                <image src="/image/delete.png" style="width: 80rpx; height: 80rpx;"/>
+                            </view>
+                        </view>
+                    </swiper-item>
+                </swiper>
+            </view>
+            <view class="article_tags" wx:if="{{item.tags!=null}}">
+                <view class="article_tag" wx:for="{{item.tags}}" wx:key="item">
+                    {{item}}
+                </view>
+            </view>
+        </view>
+    </scroll-view>
+    <view class="floating_buttons_container" wx:if="{{showFloatingButtons}}" animation="{{floatingButtonsAnimation}}">
+        <view class="floating_button_refresh" bindtap="onRefreshTap">
+            <image class="floating_button_icon" src="/image/reload.png">
+            </image>
+        </view>
+        <view class="floating_button_add" bindtap="onAddTap">
+            <image class="floating_button_icon" src="/image/add.png">
+            </image>
+        </view>
+        <view class="floating_button_search" bindtap="onSearchTap">
+            <image class="floating_button_icon" src="/image/search.png">
+            </image>
+        </view>
+    </view>
+</view>
